@@ -214,10 +214,10 @@ def change_size(img):
 #测试位置
 #img：输入图像
 #0123456：代表当时状态
-def position_dection(img):
+def position_dection(img,w):
     #分割画面
-    left_img=img[:,0:640,:]
-    right_img=img[:,640:1280,:]
+    left_img=img[:,0:w,:]
+    right_img=img[:,w:2*w,:]
     #灰度化
     left_img=cv2.cvtColor(left_img,cv2.COLOR_BGR2GRAY)
     right_img=cv2.cvtColor(right_img,cv2.COLOR_BGR2GRAY)
@@ -740,7 +740,7 @@ class mainWindow(QtWidgets.QWidget,Ui_VR_detection):
         self.graphicsView_2.setScene(show_picked_pic(self.image ,self.graphicsView_2.width()) ) # 往显示视频的Label里 显示QImage
     def NED_detection(self):
         self.textBrowser.clear()
-        i=position_dection(self.img_NED)
+        i=position_dection(self.img_NED,self.w)
         if(i==0):
             self.textBrowser.append("位置正确,允许测量")
         elif(i==1):
