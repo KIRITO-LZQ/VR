@@ -336,10 +336,40 @@ def change_size(img):
     # cv2.destroyAllWindows()
     # return pre1_picture  # 返回图片数据
 
-#亮度50%来分界
+#亮度50%来分界 利用直接判断，之后如果正式使用可以优化为二分
+#为什么要用全体对比呢，因为闪屏现象会影响我们测量的准确度
 def FOV_detection(img,pt1,pt4,h,w,a,b,c,d,a2,b2,c2,d2,expose):
     pt0=(int((pt1[0]+pt4[0])/2), int((pt1[1]+pt4[1])/2))
     Lum_standard=calculate_luminance(img[pt0[0]][pt0[1]][2],img[pt0[0]][pt0[1]][1],img[pt0[0]][pt0[1]][0],a,b,c,d,a2,b2,c2,d2,expose)
+    Lum_row=[]
+    Lum_col=[]
+    for i in range(w):
+        Lum_row.append(calculate_luminance(img[i][pt0[1]][2],img[i][pt0[1]][1],img[i][pt0[1]][0],a,b,c,d,a2,b2,c2,d2,expose))
+
+    for i in range(h):
+        Lum_col.append(calculate_luminance(img[pt0[0]][i][2],img[pt0[0]][i][1],img[pt0[0]][i][0],a,b,c,d,a2,b2,c2,d2,expose))
+
+    pt1_new=[]
+    pt4_new=[]
+    for i in range(w):
+        if(Lum_row[i]>=Lum_standard):
+            pt1_new.append(i)
+            break
+    for i in range(w-1,-1,-1):
+        if(Lum_row[i]>=Lum_standard):
+            pt4_new.append(i)
+            break
+
+    for i in range(h):
+        if(Lum_col[i]>=Lum_standard):
+            pt1_new.append(i)
+            break
+    for i in range(h-1,-1,-1):
+        if(Lum_col[i]>=Lum_standard):
+            pt4_new.append(i)
+            break
+
+    print(pt1_new,pt4_new)
 #测试位置
 def position_dection(self,img):
     #分割画面

@@ -98,17 +98,17 @@ def undistortion(images,eye):
 #img:输入图像
 #width：图像宽度
 #scene：返回图像
-def show_picked_pic(img,width):
-    pic=cv2.cvtColor(img,cv2.COLOR_BGR2RGB)#转换图像通道
-    QtImg=QImage(pic.data,pic.shape[1],pic.shape[0],pic.shape[1]*3,QImage.Format_RGB888)
-
-    myimg=QPixmap.fromImage(QtImg)
-    myimg=myimg.scaledToWidth(width-20)#自适应高度
-
-    item=QGraphicsPixmapItem(myimg)#创建像素图元
-    scene=QGraphicsScene()#创建场景
-    scene.addItem(item)
-    return scene
+# def show_picked_pic(img,width):
+#     pic=cv2.cvtColor(img,cv2.COLOR_BGR2RGB)#转换图像通道
+#     QtImg=QImage(pic.data,pic.shape[1],pic.shape[0],pic.shape[1]*3,QImage.Format_RGB888)
+#
+#     myimg=QPixmap.fromImage(QtImg)
+#     myimg=myimg.scaledToWidth(width-100)#自适应高度
+#
+#     item=QGraphicsPixmapItem(myimg)#创建像素图元
+#     scene=QGraphicsScene()#创建场景
+#     scene.addItem(item)
+#     return scene
 
 
 #图片二值化
@@ -572,13 +572,17 @@ def michelson_contrast(img,rect,expose,eye):
 
     return result1
 
+#图片opencv转Qimage
+#img:输入图像
+#width：图像宽度
+#scene：返回图像
 def show_picked_pic(img,width):
     show = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)  # 视频色彩转换回RGB，这样才是现实的颜色
     showImage = QtGui.QImage(show.data, show.shape[1], show.shape[0],
                              QtGui.QImage.Format_RGB888)  # 把读取到的视频数据变成QImage形式
 
     showImage = QtGui.QPixmap.fromImage(showImage)
-    showImage = showImage.scaledToWidth(width - 50)  # 自适应高度
+    showImage = showImage.scaledToWidth(width - 80)  # 自适应高度
     item = QGraphicsPixmapItem(showImage)  # 创建像素图元
     scene = QGraphicsScene()  # 创建场景
     scene.addItem(item)
