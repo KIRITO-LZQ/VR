@@ -631,8 +631,8 @@ class mainWindow(QtWidgets.QWidget,Ui_VR_detection):
         #FOV
         self.pushButton_9.clicked.connect(self.button_open_camera_clicked)
         self.pushButton_10.clicked.connect(self.FOV_capture)
-        self.pushButton_11.clicked.connect(self.FOV_cutrect)
-        self.pushButton_12.clicked.connect(self.FOV_binarization)
+        self.pushButton_11.clicked.connect(self.FOV_binarization)
+        self.pushButton_12.clicked.connect(self.FOV_cutrect)
         # self.pushButton_13.clicked.connect(self.ninepoint)#保存结果
         #亮度
         self.pushButton_14.clicked.connect(self.button_open_camera_clicked)
@@ -668,14 +668,53 @@ class mainWindow(QtWidgets.QWidget,Ui_VR_detection):
             else:
 
                 self.timer_camera.start(30)  # 定时器开始计时30ms，结果是每过30ms从摄像头中取一帧显示
-                self.pushButton.setText('关闭相机')
+                if (self.tabWidget.currentIndex() == 0):
+                    self.pushButton.setText('关闭相机')  # 往显示视频的Label里 显示QImage
+                elif (self.tabWidget.currentIndex() == 1):
+                    self.pushButton_4.setText('关闭相机')
+                elif (self.tabWidget.currentIndex() == 2):
+                    self.pushButton_9.setText('关闭相机')
+                elif (self.tabWidget.currentIndex() == 3):
+                    self.pushButton_14.setText('关闭相机')
+                elif (self.tabWidget.currentIndex() == 4):
+                    self.pushButton_18.setText('关闭相机')
+                elif (self.tabWidget.currentIndex() == 5):
+                    self.pushButton_22.setText('关闭相机')
+                elif (self.tabWidget.currentIndex() == 6):
+                    self.pushButton_27.setText('关闭相机')
         else:
 
             self.timer_camera.stop()  # 关闭定时器
             self.cap.release()  # 释放视频流
             self.graphicsView.setScene(QGraphicsScene())  # 清空视频显示区域
             self.graphicsView_2.setScene(QGraphicsScene())
-            self.pushButton.setText('打开相机')
+            self.graphicsView_3.setScene(QGraphicsScene())
+            self.graphicsView_4.setScene(QGraphicsScene())
+            self.graphicsView_7.setScene(QGraphicsScene())
+            self.graphicsView_8.setScene(QGraphicsScene())
+            self.graphicsView_11.setScene(QGraphicsScene())
+            self.graphicsView_12.setScene(QGraphicsScene())
+            self.graphicsView_15.setScene(QGraphicsScene())
+            self.graphicsView_16.setScene(QGraphicsScene())
+            self.graphicsView_19.setScene(QGraphicsScene())
+            self.graphicsView_20.setScene(QGraphicsScene())
+            self.graphicsView_23.setScene(QGraphicsScene())
+            self.graphicsView_24.setScene(QGraphicsScene())
+
+            if (self.tabWidget.currentIndex() == 0):
+                self.pushButton.setText('打开相机')  # 往显示视频的Label里 显示QImage
+            elif (self.tabWidget.currentIndex() == 1):
+                self.pushButton_4.setText('打开相机')
+            elif (self.tabWidget.currentIndex() == 2):
+                self.pushButton_9.setText('打开相机')
+            elif (self.tabWidget.currentIndex() == 3):
+                self.pushButton_14.setText('打开相机')
+            elif (self.tabWidget.currentIndex() == 4):
+                self.pushButton_18.setText('打开相机')
+            elif (self.tabWidget.currentIndex() == 5):
+                self.pushButton_22.setText('打开相机')
+            elif (self.tabWidget.currentIndex() == 6):
+                self.pushButton_27.setText('打开相机')
 
     def show_camera(self):
         self.cap.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc('M', 'J', 'P','G'))
@@ -691,8 +730,8 @@ class mainWindow(QtWidgets.QWidget,Ui_VR_detection):
         self.image = np.hstack((self.left_frame, self.right_frame))
         # show = cv2.resize(self.image, (self.w, self.h))
         img0=show_picked_pic(self.image,self.graphicsView.width())# 把读到的帧的大小重新设置为 640x480
-        img1 = show_picked_pic(self.left_frame, self.graphicsView_3.width())
-        img2 = show_picked_pic(self.right_frame, self.graphicsView_3.width())
+        img1 = show_picked_pic(self.left_frame, self.graphicsView_5.width())
+        img2 = show_picked_pic(self.right_frame, self.graphicsView_5.width())
 
         if(self.tabWidget.currentIndex()==0):
             self.graphicsView.setScene(img0)  # 往显示视频的Label里 显示QImage
@@ -714,6 +753,8 @@ class mainWindow(QtWidgets.QWidget,Ui_VR_detection):
         elif (self.tabWidget.currentIndex() == 6):
             self.graphicsView_23.setScene(img1)
             self.graphicsView_24.setScene(img2)
+
+
 
     def change_expose(self):
 
@@ -799,27 +840,30 @@ class mainWindow(QtWidgets.QWidget,Ui_VR_detection):
     def FOV_capture(self):
         if (self.radioButton_3.isChecked()):
             self.img_FOV = self.left_frame.copy()
-            self.aov_h = AOVhl
-            self.aov_v = AOVvl
+            # self.aov_h = AOVhl
+            # self.aov_v = AOVvl
         elif (self.radioButton_4.isChecked()):
             self.img_FOV = self.right_frame.copy()
-            self.aov_h = AOVhr
-            self.aov_v = AOVvr
+            # self.aov_h = AOVhr
+            # self.aov_v = AOVvr
         self.graphicsView_9.setScene(show_picked_pic(self.img_FOV, self.graphicsView_9.width()))
     #图片二值化
     def FOV_binarization(self):
-        self.img_FOV_cut=pic_binarization(self.img_FOV.copy())
+        self.img_FOV_cut=pic_binarization(self.img_FOV)
         self.graphicsView_10.setScene(show_picked_pic(self.img_FOV_cut, self.graphicsView_10.width()))
 
     #矩形截取
     def FOV_cutrect(self):
+
         self.img_FOV_cut,self.hw,self.pt1,self.pt4=change_size(self.img_FOV_cut)
         h, w = self.img_FOV_cut.shape[0:2]
         self.pt0 = (int(w / 2), int(h / 2))
         self.graphicsView_10.setScene(show_picked_pic(self.img_FOV_cut, self.graphicsView_10.width()))
+        if (self.radioButton_3.isChecked()):
+            self.result=fov_Ned(self.pt0, 'l', self.pt1, self.pt4)
+        elif (self.radioButton_4.isChecked()):
+            self.result=fov_Ned(self.pt0, 'r', self.pt1, self.pt4)
 
-
-        self.result=fov_Ned(self.pt0, self.aov_h, self.aov_v, self.pt1, self.pt4)
 
         self.textBrowser_3.append("水平FOV为：" + str(self.result[0]))
         self.textBrowser_3.append("竖直FOV为：" + str(self.result[1]))
@@ -830,44 +874,44 @@ class mainWindow(QtWidgets.QWidget,Ui_VR_detection):
     def Lum_capture(self):
         if (self.radioButton_5.isChecked()):
             self.img_Lum = self.left_frame.copy()
-            if(self.spinBox_4.value==-4):
-                self.a_small=a_4_l_small
-                self.b_small=b_4_l_small
-                self.c_small = c_4_l_small
-                self.d_small = d_4_l_small
-                self.a_big = a_4_l_big
-                self.b_big = b_4_l_big
-                self.c_big = c_4_l_big
-                self.d_big = d_4_l_big
-            elif (self.spinBox_4.value == -5):
-                self.a_small = a_5_l_small
-                self.b_small = b_5_l_small
-                self.c_small = c_5_l_small
-                self.d_small = d_5_l_small
-                self.a_big = a_5_l_big
-                self.b_big = b_5_l_big
-                self.c_big = c_5_l_big
-                self.d_big = d_5_l_big
+            # if(self.spinBox_4.value==-4):
+            #     self.a_small=a_4_l_small
+            #     self.b_small=b_4_l_small
+            #     self.c_small = c_4_l_small
+            #     self.d_small = d_4_l_small
+            #     self.a_big = a_4_l_big
+            #     self.b_big = b_4_l_big
+            #     self.c_big = c_4_l_big
+            #     self.d_big = d_4_l_big
+            # elif (self.spinBox_4.value == -5):
+            #     self.a_small = a_5_l_small
+            #     self.b_small = b_5_l_small
+            #     self.c_small = c_5_l_small
+            #     self.d_small = d_5_l_small
+            #     self.a_big = a_5_l_big
+            #     self.b_big = b_5_l_big
+            #     self.c_big = c_5_l_big
+            #     self.d_big = d_5_l_big
         elif (self.radioButton_6.isChecked()):
             self.img_Lum = self.right_frame.copy()
-            if (self.spinBox_4.value == -4):
-                self.a_small = a_4_r_small
-                self.b_small = b_4_r_small
-                self.c_small = c_4_r_small
-                self.d_small = d_4_r_small
-                self.a_big = a_4_r_big
-                self.b_big = b_4_r_big
-                self.c_big = c_4_r_big
-                self.d_big = d_4_r_big
-            elif (self.spinBox_4.value == -5):
-                self.a_small = a_5_r_small
-                self.b_small = b_5_r_small
-                self.c_small = c_5_r_small
-                self.d_small = d_5_r_small
-                self.a_big = a_5_r_big
-                self.b_big = b_5_r_big
-                self.c_big = c_5_r_big
-                self.d_big = d_5_r_big
+            # if (self.spinBox_4.value == -4):
+            #     self.a_small = a_4_r_small
+            #     self.b_small = b_4_r_small
+            #     self.c_small = c_4_r_small
+            #     self.d_small = d_4_r_small
+            #     self.a_big = a_4_r_big
+            #     self.b_big = b_4_r_big
+            #     self.c_big = c_4_r_big
+            #     self.d_big = d_4_r_big
+            # elif (self.spinBox_4.value == -5):
+            #     self.a_small = a_5_r_small
+            #     self.b_small = b_5_r_small
+            #     self.c_small = c_5_r_small
+            #     self.d_small = d_5_r_small
+            #     self.a_big = a_5_r_big
+            #     self.b_big = b_5_r_big
+            #     self.c_big = c_5_r_big
+            #     self.d_big = d_5_r_big
         self.graphicsView_13.setScene(show_picked_pic(self.img_Lum, self.graphicsView_13.width()))
     #亮度测量
     def Lum_detection(self):
@@ -879,9 +923,14 @@ class mainWindow(QtWidgets.QWidget,Ui_VR_detection):
         # 演示效果
         self.graphicsView_14.setScene(show_picked_pic( pictem, self.graphicsView_14.width()))
 
-        self.result1, self.result2 = luminance(self.img_Lum, self.rect_Lum, self.a_small, self.b_small, self.c_small, self.d_small, self.a_big,
-                                                  self.b_big, self.c_big
-                                                  , self.d_big, self.expose)
+        if (self.radioButton_5.isChecked()):
+            self.result1, self.result2 = luminance(self.img_Lum, self.rect_Lum, self.expose,'l')
+
+        elif (self.radioButton_6.isChecked()):
+            self.result1, self.result2 = luminance(self.img_Lum, self.rect_Lum, self.expose,'r')
+        # self.result1, self.result2 = luminance(self.img_Lum, self.rect_Lum, self.a_small, self.b_small, self.c_small, self.d_small, self.a_big,
+        #                                           self.b_big, self.c_big
+        #                                           , self.d_big, self.expose)
         self.textBrowser_4.append('九点亮度测量值：')  # 未完成部分
         for i in self.result1:
             self.textBrowser_4.append(str(i))
@@ -894,20 +943,20 @@ class mainWindow(QtWidgets.QWidget,Ui_VR_detection):
     def Chrom_capture(self):
         if (self.radioButton_7.isChecked()):
             self.img_Chrom = self.left_frame.copy()
-            if(self.radioButton_9.isChecked()):
-                self.m=chromm_4_blue_l
-            elif (self.radioButton_10.isChecked()):
-                self.m=chromm_4_green_l
-            elif (self.radioButton_11.isChecked()):
-                self.m=chromm_4_red_l
+            # if(self.radioButton_9.isChecked()):
+            #     self.m=chromm_4_blue_l
+            # elif (self.radioButton_10.isChecked()):
+            #     self.m=chromm_4_green_l
+            # elif (self.radioButton_11.isChecked()):
+            #     self.m=chromm_4_red_l
         elif (self.radioButton_8.isChecked()):
             self.img_Chrom  = self.right_frame.copy()
-            if (self.radioButton_9.isChecked()):
-                self.m = chromm_4_blue_r
-            elif (self.radioButton_10.isChecked()):
-                self.m = chromm_4_green_r
-            elif (self.radioButton_11.isChecked()):
-                self.m = chromm_4_red_r
+            # if (self.radioButton_9.isChecked()):
+            #     self.m = chromm_4_blue_r
+            # elif (self.radioButton_10.isChecked()):
+            #     self.m = chromm_4_green_r
+            # elif (self.radioButton_11.isChecked()):
+            #     self.m = chromm_4_red_r
         self.graphicsView_17.setScene(show_picked_pic(self.img_Chrom, self.graphicsView_17.width()))
     #分析色度
     def Chrom_detection(self):
@@ -918,8 +967,21 @@ class mainWindow(QtWidgets.QWidget,Ui_VR_detection):
             self.rect_Chrom, pictem = turn_points_to_rects(self.img_Chrom.copy(), self.rightcorners, 10)
         # 演示效果
         self.graphicsView_18.setScene(show_picked_pic(pictem, self.graphicsView_18.width()))
-
-        self.result1, self.result2 = chromaticity(self.img_Chrom,self.rect_Chrom,self.m)
+        if (self.radioButton_7.isChecked()):
+            if(self.radioButton_9.isChecked()):
+                self.result1, self.result2 = chromaticity(self.img_Chrom,self.rect_Chrom,'l','Blue')
+            elif (self.radioButton_10.isChecked()):
+                self.result1, self.result2 = chromaticity(self.img_Chrom,self.rect_Chrom,'l','Green')
+            elif (self.radioButton_11.isChecked()):
+                self.result1, self.result2 = chromaticity(self.img_Chrom,self.rect_Chrom,'l','Red')
+        elif (self.radioButton_8.isChecked()):
+            if (self.radioButton_9.isChecked()):
+                self.result1, self.result2 = chromaticity(self.img_Chrom,self.rect_Chrom,'r','Blue')
+            elif (self.radioButton_10.isChecked()):
+                self.result1, self.result2 = chromaticity(self.img_Chrom,self.rect_Chrom,'r','Green')
+            elif (self.radioButton_11.isChecked()):
+                self.result1, self.result2 = chromaticity(self.img_Chrom,self.rect_Chrom,'r','Red')
+        # self.result1, self.result2 = chromaticity(self.img_Chrom,self.rect_Chrom,self.m)
 
         self.textBrowser_5.append("九点色度测量值：")  # 未完成部分
         for i in self.result1:
@@ -947,11 +1009,11 @@ class mainWindow(QtWidgets.QWidget,Ui_VR_detection):
     def Distortion_detection(self):
         #去畸变
         if (self.radioButton_12.isChecked()):
-            self.img_distortion1 = undistortion(self.img_distortion1, mrxl, distl)
-            self.img_distortion2 = undistortion(self.img_distortion2, mrxl, distl)
+            self.img_distortion1 = undistortion(self.img_distortion1, 'l')
+            self.img_distortion2 = undistortion(self.img_distortion2, 'l')
         elif (self.radioButton_13.isChecked()):
-            self.img_distortion1 = undistortion(self.img_distortion1, mrxr, distr)
-            self.img_distortion2 = undistortion(self.img_distortion2, mrxr, distr)
+            self.img_distortion1 = undistortion(self.img_distortion1, 'r')
+            self.img_distortion2 = undistortion(self.img_distortion2, 'r')
         self.graphicsView_21.setScene(show_picked_pic(self.img_distortion1, self.graphicsView_21.width()))
         self.graphicsView_22.setScene(show_picked_pic(self.img_distortion2, self.graphicsView_22.width()))
         #获得九点坐标
@@ -976,44 +1038,44 @@ class mainWindow(QtWidgets.QWidget,Ui_VR_detection):
     def Michelson_capture(self):
         if (self.radioButton_14.isChecked()):
             self.img_Miche = self.left_frame.copy()
-            if(self.spinBox_7.value==-4):
-                self.a_small=a_4_l_small
-                self.b_small=b_4_l_small
-                self.c_small = c_4_l_small
-                self.d_small = d_4_l_small
-                self.a_big = a_4_l_big
-                self.b_big = b_4_l_big
-                self.c_big = c_4_l_big
-                self.d_big = d_4_l_big
-            elif (self.spinBox_7.value == -5):
-                self.a_small = a_5_l_small
-                self.b_small = b_5_l_small
-                self.c_small = c_5_l_small
-                self.d_small = d_5_l_small
-                self.a_big = a_5_l_big
-                self.b_big = b_5_l_big
-                self.c_big = c_5_l_big
-                self.d_big = d_5_l_big
+            # if(self.spinBox_7.value==-4):
+            #     self.a_small=a_4_l_small
+            #     self.b_small=b_4_l_small
+            #     self.c_small = c_4_l_small
+            #     self.d_small = d_4_l_small
+            #     self.a_big = a_4_l_big
+            #     self.b_big = b_4_l_big
+            #     self.c_big = c_4_l_big
+            #     self.d_big = d_4_l_big
+            # elif (self.spinBox_7.value == -5):
+            #     self.a_small = a_5_l_small
+            #     self.b_small = b_5_l_small
+            #     self.c_small = c_5_l_small
+            #     self.d_small = d_5_l_small
+            #     self.a_big = a_5_l_big
+            #     self.b_big = b_5_l_big
+            #     self.c_big = c_5_l_big
+            #     self.d_big = d_5_l_big
         elif (self.radioButton_15.isChecked()):
             self.img_Miche = self.right_frame.copy()
-            if (self.spinBox_7.value == -4):
-                self.a_small = a_4_r_small
-                self.b_small = b_4_r_small
-                self.c_small = c_4_r_small
-                self.d_small = d_4_r_small
-                self.a_big = a_4_r_big
-                self.b_big = b_4_r_big
-                self.c_big = c_4_r_big
-                self.d_big = d_4_r_big
-            elif (self.spinBox_7.value == -5):
-                self.a_small = a_5_r_small
-                self.b_small = b_5_r_small
-                self.c_small = c_5_r_small
-                self.d_small = d_5_r_small
-                self.a_big = a_5_r_big
-                self.b_big = b_5_r_big
-                self.c_big = c_5_r_big
-                self.d_big = d_5_r_big
+            # if (self.spinBox_7.value == -4):
+            #     self.a_small = a_4_r_small
+            #     self.b_small = b_4_r_small
+            #     self.c_small = c_4_r_small
+            #     self.d_small = d_4_r_small
+            #     self.a_big = a_4_r_big
+            #     self.b_big = b_4_r_big
+            #     self.c_big = c_4_r_big
+            #     self.d_big = d_4_r_big
+            # elif (self.spinBox_7.value == -5):
+            #     self.a_small = a_5_r_small
+            #     self.b_small = b_5_r_small
+            #     self.c_small = c_5_r_small
+            #     self.d_small = d_5_r_small
+            #     self.a_big = a_5_r_big
+            #     self.b_big = b_5_r_big
+            #     self.c_big = c_5_r_big
+            #     self.d_big = d_5_r_big
         self.graphicsView_25.setScene(show_picked_pic(self.img_Miche, self.graphicsView_25.width()))
 
     def Michelson_detection(self):
@@ -1023,11 +1085,20 @@ class mainWindow(QtWidgets.QWidget,Ui_VR_detection):
         elif (self.radioButton_15.isChecked()):
             self.rect_Miche,pictem= turn_points_to_rects(self.img_Miche.copy(), self.rightcorners[4],35)
         # 演示效果
-        self.graphicsView_26.setScene(show_picked_pic( pictem, self.graphicsView_26.width()))
+        self.graphicsView_25.setScene(show_picked_pic( pictem, self.graphicsView_25.width()))
+        if (self.radioButton_14.isChecked()):
+            self.result = michelson_contrast(self.img_Miche, self.rect_Miche, self.expose, 'l')
 
-        self.result = michelson_contrast(self.img_Miche, self.rect_Miche, self.a_small, self.b_small, self.c_small, self.d_small, self.a_big,
-                                                  self.b_big, self.c_big
-                                                  , self.d_big, self.expose)
+            # if(self.spinBox_7.value==-4):
+            #     self.result = michelson_contrast(self.img_Miche, self.rect_Miche, self.expose,'l')
+            # elif (self.spinBox_7.value == -5):
+            #     self.result = michelson_contrast(self.img_Miche, self.rect_Miche, self.expose,'l')
+
+        elif (self.radioButton_15.isChecked()):
+            self.result = michelson_contrast(self.img_Miche, self.rect_Miche, self.expose,'r')
+        # self.result = michelson_contrast(self.img_Miche, self.rect_Miche, self.a_small, self.b_small, self.c_small, self.d_small, self.a_big,
+        #                                           self.b_big, self.c_big
+        #                                           , self.d_big, self.expose)
 
         self.textBrowser_7.append('最大亮度：' + str(self.result[0]))
         self.textBrowser_7.append('最小亮度：' + str(self.result[1]))
