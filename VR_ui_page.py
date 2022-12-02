@@ -18,8 +18,10 @@ import sys
 #畸变参数 mrx内参矩阵 dist畸变系数
 mrxl=np.array([[1462.57,0,679.184],[0,1459.77,533.486],[0,0,1]])
 mrxr=np.array([[1467.16,0,696.055],[0,1464.95,605.525],[0,0,1]])
-distl=[[-0.103343,0.284581,-1.39716,2.18507]]
-distr=[[-0.0858416,0.0126673,0.02139,-0.178977]]
+distl = (0.19895288, -0.26079854, -0.0076386, 0.00936797, 0.21936881)
+distr = (0.19895288, -0.26079854, -0.0076386, 0.00936797, 0.21936881)
+# distl=[[-0.103343,0.284581,-1.39716,2.18507]]
+# distr=[[-0.0858416,0.0126673,0.02139,-0.178977]]
 
 #FOV参数 AOVh水平视角 AOVv竖直视角
 AOVhl=83.80
@@ -86,6 +88,7 @@ def undistortion(images,eye):
         dist=distr
 
     h,w=images.shape[:2]
+
     newcameramtx, roi = cv2.getOptimalNewCameraMatrix(mrx, dist, (w, h), 1, (w, h))
     dst = cv2.undistort(images, mrx, dist, None, newcameramtx)
     x, y, w, h = roi
@@ -730,8 +733,8 @@ class mainWindow(QtWidgets.QWidget,Ui_VR_detection):
         self.image = np.hstack((self.left_frame, self.right_frame))
         # show = cv2.resize(self.image, (self.w, self.h))
         img0=show_picked_pic(self.image,self.graphicsView.width())# 把读到的帧的大小重新设置为 640x480
-        img1 = show_picked_pic(self.left_frame, self.graphicsView_5.width())
-        img2 = show_picked_pic(self.right_frame, self.graphicsView_5.width())
+        img1 = show_picked_pic(self.left_frame, int(self.graphicsView.width()/2))
+        img2 = show_picked_pic(self.right_frame, int(self.graphicsView.width()/2))
 
         if(self.tabWidget.currentIndex()==0):
             self.graphicsView.setScene(img0)  # 往显示视频的Label里 显示QImage
@@ -915,10 +918,19 @@ class mainWindow(QtWidgets.QWidget,Ui_VR_detection):
         self.graphicsView_13.setScene(show_picked_pic(self.img_Lum, self.graphicsView_13.width()))
     #亮度测量
     def Lum_detection(self):
+
         self.textBrowser_4.clear()
         if (self.radioButton_5.isChecked()):
+            if (self.leftcorners==[]):
+                msg_box = QMessageBox(QMessageBox.Warning, '警告', '未获取左边角点坐标')
+                msg_box.exec_()
+                return
             self.rect_Lum,pictem=turn_points_to_rects(self.img_Lum.copy(),self.leftcorners,10)
         elif (self.radioButton_6.isChecked()):
+            if (self.rightcorners==[]):
+                msg_box = QMessageBox(QMessageBox.Warning, '警告', '未获取右边角点坐标')
+                msg_box.exec_()
+                return
             self.rect_Lum,pictem= turn_points_to_rects(self.img_Lum.copy(), self.rightcorners, 10)
         # 演示效果
         self.graphicsView_14.setScene(show_picked_pic( pictem, self.graphicsView_14.width()))
@@ -962,8 +974,16 @@ class mainWindow(QtWidgets.QWidget,Ui_VR_detection):
     def Chrom_detection(self):
         self.textBrowser_5.clear()
         if (self.radioButton_7.isChecked()):
+            if (self.leftcorners==[]):
+                msg_box = QMessageBox(QMessageBox.Warning, '警告', '未获取左边角点坐标')
+                msg_box.exec_()
+                return
             self.rect_Chrom, pictem = turn_points_to_rects(self.img_Chrom.copy(), self.leftcorners, 10)
         elif (self.radioButton_8.isChecked()):
+            if (self.rightcorners==[]):
+                msg_box = QMessageBox(QMessageBox.Warning, '警告', '未获取右边角点坐标')
+                msg_box.exec_()
+                return
             self.rect_Chrom, pictem = turn_points_to_rects(self.img_Chrom.copy(), self.rightcorners, 10)
         # 演示效果
         self.graphicsView_18.setScene(show_picked_pic(pictem, self.graphicsView_18.width()))
@@ -1081,8 +1101,16 @@ class mainWindow(QtWidgets.QWidget,Ui_VR_detection):
     def Michelson_detection(self):
         self.textBrowser_7.clear()
         if (self.radioButton_14.isChecked()):
+            if (self.leftcorners==[]):
+                msg_box = QMessageBox(QMessageBox.Warning, '警告', '未获取左边角点坐标')
+                msg_box.exec_()
+                return
             self.rect_Miche,pictem=turn_points_to_rects(self.img_Miche.copy(),self.leftcorners[4], 35)
         elif (self.radioButton_15.isChecked()):
+            if (self.rightcorners==[]):
+                msg_box = QMessageBox(QMessageBox.Warning, '警告', '未获取右边角点坐标')
+                msg_box.exec_()
+                return
             self.rect_Miche,pictem= turn_points_to_rects(self.img_Miche.copy(), self.rightcorners[4],35)
         # 演示效果
         self.graphicsView_25.setScene(show_picked_pic( pictem, self.graphicsView_25.width()))
