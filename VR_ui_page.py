@@ -1114,7 +1114,7 @@ class mainWindow(QtWidgets.QWidget,Ui_VR_detection):
                 return
             self.rect_Miche,pictem= turn_points_to_rects(self.img_Miche.copy(), self.rightcorners[4],35)
         # 演示效果
-        self.graphicsView_26.setScene(show_picked_pic( pictem, self.graphicsView_25.width()))
+        self.graphicsView_25.setScene(show_picked_pic( pictem, self.graphicsView_25.width()))
         if (self.radioButton_14.isChecked()):
             self.result = michelson_contrast(self.img_Miche, self.rect_Miche, self.expose, 'l')
 
