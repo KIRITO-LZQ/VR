@@ -16,8 +16,8 @@ import sys
 # warnings.filterwarnings("ignore")
 #标定数据参数(最先完成)
 #畸变参数 mrx内参矩阵 dist畸变系数
-mrxl=np.array([[1462.57,0,679.184],[0,1459.77,533.486],[0,0,1]])
-mrxr=np.array([[1467.16,0,696.055],[0,1464.95,605.525],[0,0,1]])
+mrxl=np.array([[613.17778151,0. ,356.52588194],[  0.,612.75811158,258.99840619],[  0.,0.,1.        ]])
+mrxr=np.array([[613.17778151,0. ,356.52588194],[  0.,612.75811158,258.99840619],[  0.,0.,1.        ]])
 distl = (0.19895288, -0.26079854, -0.0076386, 0.00936797, 0.21936881)
 distr = (0.19895288, -0.26079854, -0.0076386, 0.00936797, 0.21936881)
 # distl=[[-0.103343,0.284581,-1.39716,2.18507]]
@@ -581,7 +581,7 @@ def michelson_contrast(img,rect,expose,eye):
 #scene：返回图像
 def show_picked_pic(img,width):
     show = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)  # 视频色彩转换回RGB，这样才是现实的颜色
-    showImage = QtGui.QImage(show.data, show.shape[1], show.shape[0],
+    showImage = QtGui.QImage(show.data, show.shape[1], show.shape[0],show.shape[1]*3,
                              QtGui.QImage.Format_RGB888)  # 把读取到的视频数据变成QImage形式
 
     showImage = QtGui.QPixmap.fromImage(showImage)
@@ -613,7 +613,7 @@ class mainWindow(QtWidgets.QWidget,Ui_VR_detection):
         self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, self.h)# 拍摄图像高度
         self.cap.set(cv2.CAP_PROP_EXPOSURE, self.expose)# 摄像头曝光值
 
-        self.CAM_NUM = 0  # 为0时表示视频流来自笔记本内置摄像头
+        self.CAM_NUM = 1  # 为0时表示视频流来自笔记本内置摄像头
         self.spinBox.valueChanged.connect(self.change_expose)#选择曝光值
         self.spinBox_2.valueChanged.connect(self.change_expose)
         self.spinBox_3.valueChanged.connect(self.change_expose)
@@ -1005,8 +1005,9 @@ class mainWindow(QtWidgets.QWidget,Ui_VR_detection):
 
         self.textBrowser_5.append("九点色度测量值：")  # 未完成部分
         for i in self.result1:
-            self.textBrowser.append(str(i[0]))
+            self.textBrowser_5.append(str(i[0]))
         self.textBrowser_5.append("最大色差：")
+        self.textBrowser_5.append(str(self.result2[0]))
 
 #畸变测量
     #拍摄图一
@@ -1113,7 +1114,7 @@ class mainWindow(QtWidgets.QWidget,Ui_VR_detection):
                 return
             self.rect_Miche,pictem= turn_points_to_rects(self.img_Miche.copy(), self.rightcorners[4],35)
         # 演示效果
-        self.graphicsView_25.setScene(show_picked_pic( pictem, self.graphicsView_25.width()))
+        self.graphicsView_26.setScene(show_picked_pic( pictem, self.graphicsView_25.width()))
         if (self.radioButton_14.isChecked()):
             self.result = michelson_contrast(self.img_Miche, self.rect_Miche, self.expose, 'l')
 
